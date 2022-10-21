@@ -20,7 +20,8 @@ gpu_devices = ['/device:GPU:0']
 controller = '/device:GPU:0'
 
 # TODO: Set the path to the trained model (make sure you've downloaded it first from http://bit.ly/tfoptflow)
-ckpt_path = './models/pwcnet-lg-6-2-multisteps-chairsthingsmix/pwcnet.ckpt-595000'
+ckpt_path = 'D:\\AirSim simulator\\FDD\\Optical flow\\PWC-Net_TF\\tfoptflow\\models\\' \
+            'pwcnet-lg-6-2-multisteps-chairsthingsmix\\pwcnet.ckpt-595000'
 
 # Build a list of image pairs to process
 img_pairs = []

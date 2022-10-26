@@ -1,6 +1,8 @@
 from __future__ import absolute_import, division, print_function
 from copy import deepcopy
 from skimage.io import imread
+import time
+import numpy as np
 from model_pwcnet import ModelPWCNet, _DEFAULT_PWCNET_TEST_OPTIONS
 from visualize import display_img_pairs_w_flows
 import os
@@ -32,8 +34,8 @@ def predict_video_PWCNET(video_path, fps_in, fps_out, img_folder, img_start, img
     img_names = sorted(os.listdir(img_folder))[img_start:end_img:int(fps_in/fps_out)]
     img_pairs = []
     for i in range(img_step, len(img_names), skip_pairs):
-        image_path1 = os.path.join(img_folder, img_names[i])
-        image_path2 = os.path.join(img_folder, img_names[i-img_step])
+        image_path1 = os.path.join(img_folder, img_names[i-img_step])
+        image_path2 = os.path.join(img_folder, img_names[i])
         image1, image2 = imread(image_path1), imread(image_path2)
         if image1.shape[2] == 4:
             # convert the image from RGBA2RGB
@@ -67,6 +69,18 @@ def predict_video_PWCNET(video_path, fps_in, fps_out, img_folder, img_start, img
     nn.print_config()
 
     # Generate the predictions and display them
+    # time_lst = []
+    # counter = 0
+    # for img_pair in img_pairs:
+    #     start = time.time()
+    #     pred_label = nn.predict_from_img_pairs([img_pair], batch_size=1, verbose=False)
+    #     end = time.time()
+    #     elapsed_time = end - start
+    #     time_lst.append(elapsed_time)
+    #     print(f"Elapsed time of iter {counter}: {elapsed_time}")
+    #     counter += 1
+    # print(f"Average elapsed time: {np.mean(time_lst)}")
+
     pred_labels = nn.predict_from_img_pairs(img_pairs, batch_size=1, verbose=False)
 
     # Store video
@@ -83,15 +97,15 @@ def predict_video_PWCNET(video_path, fps_in, fps_out, img_folder, img_start, img
 
 
 if __name__ == "__main__":
-    img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Coen_city_256_144"
+    # img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Coen_city_256_144"
     # img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Coen_city_512_288"
     # img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Coen_City_1024_576"
-    # img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Coen_City_1024_576_2"
+    img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Coen_City_1024_576_2"
     # img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\Sintel_clean_ambush"
     # img_folder = "D:\\AirSim simulator\\FDD\\Optical flow\\example_images\\KITTI_2015"
-    start_img = 30
+    start_img = 0
     end_img = None
-    img_step = 3
+    img_step = 1
     fps_rate_in = 30
     fps_rate_out = 30
     skip_pairs = 1
@@ -109,7 +123,7 @@ if __name__ == "__main__":
     gpu_dev = ['/device:GPU:0']
     contr = '/device:GPU:0'
 
-    video_storage_folder = os.path.join("D:\\AirSim simulator\\FDD\\Optical flow\\OpenCV_sparse\\video_storage",
+    video_storage_folder = os.path.join("D:\\AirSim simulator\\FDD\\Optical flow\\video_storage",
                                         img_folder.split("\\")[-1])
 
     predict_video_PWCNET(video_storage_folder, fps_rate_in, fps_rate_out, img_folder, start_img, img_step,
